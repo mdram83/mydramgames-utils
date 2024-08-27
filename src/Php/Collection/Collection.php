@@ -35,6 +35,7 @@ interface Collection
      * Apply callback on each element and return whole collection object. Modifies original collection items.
      * @param callable $callback
      * @return $this
+     * @throws CollectionException
      */
     public function each(callable $callback): static;
 
@@ -42,6 +43,7 @@ interface Collection
      * Return collection object with items filtered out by callback. Does not modify original collection items.
      * @param callable $callback
      * @return $this
+     * @throws CollectionException
      */
     public function filter(callable $callback): static;
 
@@ -54,21 +56,15 @@ interface Collection
     /**
      * Return random item from collection or null if collection is empty
      * @return mixed
+     * @throws CollectionException
      */
     public function random(): mixed;
-
-    /**
-     * Assign keys based on callback run on each item. Removes duplicated keys if they exist as a result of callback.
-     * Modified original collection.
-     * @param callable $callback
-     * @return $this
-     */
-    public function assignKeys(callable $callback): static;
 
     /**
      * Reset collection items using provided elements
      * @param array $items
      * @return $this
+     * @throws CollectionException
      */
     public function reset(array $items = []): static;
 

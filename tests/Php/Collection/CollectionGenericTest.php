@@ -96,6 +96,14 @@ class CollectionGenericTest extends TestCase
         $this->assertSame([], $this->collectionEmpty->toArray());
     }
 
+    public function testRandomThrowExceptionIfCollectionEmpty(): void
+    {
+        $this->expectException(CollectionException::class);
+        $this->expectExceptionMessage(CollectionException::MESSAGE_NO_ELEMENTS);
+
+        $this->collectionEmpty->random();
+    }
+
     public function testRandom(): void
     {
         $different = false;
@@ -107,24 +115,6 @@ class CollectionGenericTest extends TestCase
         }
 
         $this->assertTrue($different);
-        $this->assertNull($this->collectionEmpty->random());
-    }
-
-    public function testAssignKeys(): void
-    {
-        $this->collection->assignKeys(fn($item) => $item * 2);
-        $this->collectionEmpty->assignKeys(fn($item) => $item * 2);
-
-        $this->assertEquals(1, $this->collection->getOne(2));
-        $this->assertEquals(2, $this->collection->getOne(4));
-        $this->assertEquals(3, $this->collection->getOne(6));
-        $this->assertSame([], $this->collectionEmpty->toArray());
-    }
-
-    public function testAssignKeysWithDuplicateKeys(): void
-    {
-        $this->collection->assignKeys(fn($item) => 'dummy-key');
-        $this->assertEquals(1, $this->collection->count());
     }
 
     public function testReset(): void
