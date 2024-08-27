@@ -48,55 +48,35 @@ class CollectionGeneric implements Collection
 
     final public function exist(mixed $key): bool
     {
-        try {
-            $this->getOne($key);
-            return true;
-        } catch (CollectionException) {
-            return false;
-        }
+        return array_key_exists($key, $this->items);
     }
 
     final public function toArray(): array
     {
-        $items = [];
-        foreach ($this->items as $item) {
-            $items[$item['key']] = $item['value'];
-        }
-        return $items;
+        return $this->items;
     }
 
     final public function each(callable $callback): static
     {
-        $items = [];
-        foreach ($this->items as $index => $item) {
-            $items[$item['key']] = $callback($item['value']);
-        }
+        $items = array_map($callback, $this->items);
         return $this->reset($items);
     }
 
     final public function filter(callable $callback): static
     {
-        $items = [];
-        foreach ($this->items as $item) {
-            if (array_filter([$item['key'] => $item['value']], $callback, ARRAY_FILTER_USE_BOTH)) {
-                $items[$item['key']] = $item['value'];
-            }
-        }
-        return new static($items);
+        return new static(array_filter($this->items, $callback));
     }
 
     final public function shuffle(): static
     {
-        /* TODO re-work in case I decide to flatten $this->items. Example below.
-        * $keys = array_keys($list);
-        * shuffle($keys);
-        * $random = array();
-        * foreach ($keys as $key)
-        * $random[$key] = $list[$key];
-        * return $random;
-        */
-        shuffle($this->items);
-        return $this;
+        $keys = array_keys($this->items);
+        shuffle($keys);
+
+        $items = [];
+        foreach ($keys as $key) {
+            $items[$key] = $this->items[$key];
+        }
+        return $this->reset($items);
     }
 
     final public function random(): mixed
@@ -104,7 +84,7 @@ class CollectionGeneric implements Collection
         if ($this->isEmpty()) {
             throw new CollectionException(CollectionException::MESSAGE_NO_ELEMENTS);
         }
-        return $this->items[array_rand($this->items)]['value'];
+        return $this->items[array_rand($this->items)];
     }
 
     final public function reset(array $items = []): static
@@ -121,41 +101,31 @@ class CollectionGeneric implements Collection
         $this->validateItemType($item);
         $this->validateKeyMode($key);
 
-        // TODO remove random key in case I decide to flatten $this->items;
-        $key = self::KEY_MODE === self::KEYS_METHOD
-            ? $this->getItemKey($item)
-            : $key ?? vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
+        $key = self::KEY_MODE === self::KEYS_METHOD ? $this->getItemKey($item) : $key;
 
         if ($this->exist($key)) {
             throw new CollectionException(CollectionException::MESSAGE_DUPLICATE);
         }
 
-        $this->items[] = ['key' => $key, 'value' => $item];
+        isset($key) ? $this->items[$key] = $item : $this->items[] = $item;
 
         return $this;
     }
 
     final public function getOne(mixed $key): mixed
     {
-        foreach ($this->items as $item) {
-            if ($item['key'] === $key) {
-                return $item['value'];
-            }
+        if (!$this->exist($key)) {
+            throw new CollectionException(CollectionException::MESSAGE_MISSING_KEY);
         }
-
-        throw new CollectionException(CollectionException::MESSAGE_MISSING_KEY);
+        return $this->items[$key];
     }
 
     final public function removeOne(mixed $key): void
     {
-        foreach ($this->items as $index => $item) {
-            if ($item['key'] === $key) {
-                unset($this->items[$index]);
-                return;
-            }
+        if (!$this->exist($key)) {
+            throw new CollectionException(CollectionException::MESSAGE_MISSING_KEY);
         }
-
-        throw new CollectionException(CollectionException::MESSAGE_MISSING_KEY);
+        unset($this->items[$key]);
     }
 
     final public function removeAll(): void
@@ -168,7 +138,12 @@ class CollectionGeneric implements Collection
         if ($this->isEmpty()) {
             throw new CollectionException(CollectionException::MESSAGE_NO_ELEMENTS);
         }
-        return array_shift($this->items)['value'];
+
+        $reversedItems = array_reverse($this->items);
+        $firstItem = array_pop($reversedItems);
+        $this->items = array_reverse($reversedItems);
+
+        return $firstItem;
     }
 
     final public function pullLast(): mixed
@@ -176,7 +151,7 @@ class CollectionGeneric implements Collection
         if ($this->isEmpty()) {
             throw new CollectionException(CollectionException::MESSAGE_NO_ELEMENTS);
         }
-        return array_pop($this->items)['value'];
+        return array_pop($this->items);
     }
 
     final public function clone(): static

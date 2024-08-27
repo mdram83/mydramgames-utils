@@ -40,7 +40,7 @@ interface Collection
     public function each(callable $callback): static;
 
     /**
-     * Return collection object with items filtered out by callback. Does not modify original collection items.
+     * Return collection object with items filtered out by callback (value only). Does not modify original collection items.
      * @param callable $callback
      * @return $this
      * @throws CollectionException
@@ -50,6 +50,7 @@ interface Collection
     /**
      * Shuffle items in collection. Modifies original collection. Keep the keys unchanged.
      * @return $this
+     * @throws CollectionException
      */
     public function shuffle(): static;
 

@@ -64,17 +64,9 @@ class CollectionGenericTest extends TestCase
         $callbackValueItems = array_filter($this->items, $callbackValue);
         $callbackValueCollection = $this->collection->filter($callbackValue);
 
-        $callbackKey = fn($item, $key) => $key === array_keys($this->items)[0];
-        $callbackKeyItems = array_filter($this->items, $callbackKey, ARRAY_FILTER_USE_BOTH);
-        $callbackKeyCollection = $this->collection->filter($callbackKey);
-
         $this->assertSame($callbackValueItems, $callbackValueCollection->toArray());
         $this->assertNotSame($this->collection->toArray(), $callbackValueCollection->toArray());
         $this->assertSame([], $this->collectionEmpty->filter($callbackValue)->toArray());
-
-        $this->assertSame($callbackKeyItems, $callbackKeyCollection->toArray());
-        $this->assertNotSame($this->collection->toArray(), $callbackKeyCollection->toArray());
-        $this->assertSame([], $this->collectionEmpty->filter($callbackKey)->toArray());
     }
 
     public function testShuffle(): void
@@ -107,13 +99,22 @@ class CollectionGenericTest extends TestCase
     public function testRandom(): void
     {
         $different = false;
+        $exists = true;
+
         for ($i = 0; $i < 100; $i++) {
+
+            if (!in_array($this->collection->random(), $this->items, true)) {
+                $exists = false;
+                break;
+            }
+
             if ($this->collection->random() !== $this->collection->random()) {
                 $different = true;
                 break;
             }
         }
 
+        $this->assertTrue($exists);
         $this->assertTrue($different);
     }
 
@@ -136,7 +137,7 @@ class CollectionGenericTest extends TestCase
     {
         $this->assertTrue($this->collection->add(4, 'D')->exist('D'));
         $this->assertEquals(5, $this->collection->add(5)->count());
-        $this->assertEquals(6, $this->collection->add(6, 0)->count());
+        $this->assertEquals(6, $this->collection->add(6, 1)->count());
     }
 
     public function testGetOneThrowExceptionWithMissingKey(): void
