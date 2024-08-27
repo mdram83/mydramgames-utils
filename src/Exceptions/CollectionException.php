@@ -2,8 +2,6 @@
 
 namespace MyDramGames\Utils\Exceptions;
 
-use MyDramGames\Utils\Exceptions\MyDramGamesUtilsException;
-
 class CollectionException extends MyDramGamesUtilsException
 {
     public const string MESSAGE_MISSING_KEY = 'Key missing in collection';
