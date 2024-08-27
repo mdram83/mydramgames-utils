@@ -4,10 +4,8 @@ namespace MyDramGames\Utils\Php\Collection;
 
 use MyDramGames\Utils\Exceptions\CollectionException;
 
-// TODO add tests for types and keys to methods reset, add, each, shuffle, INCLUDING toArray check
-
 /**
- * To support specific items types, define TYPE_CLASS or TYPE_PRIMITIVE values in child class.
+ * To support specific collection types, define TYPE_CLASS or TYPE_PRIMITIVE values in child class.
  * To support specific key mode, define KEY_MODE value (loose, forced, method) in child class.
  */
 class CollectionGeneric implements Collection
@@ -22,9 +20,9 @@ class CollectionGeneric implements Collection
     final protected const int KEYS_METHOD = 2;
 
     /**
-     * KEYS_LOOSE = 0 results in using array keys during reset() and provided or generated key during add().
+     * KEYS_LOOSE = 0 results in using array keys during reset() and provided or auto-generated key during add().
      * KEYS_FORCED = 1 results in using array keys during reset() and provided key during add() else throws exception.
-     * KEYS_METHOD = 2 results in using callableItemKey() during reset() and add() else throws exception.
+     * KEYS_METHOD = 2 results in using getItemKey() during reset() and add(), throws exception if other provided.
      */
     protected const int KEY_MODE = self::KEYS_LOOSE;
 
@@ -91,7 +89,7 @@ class CollectionGeneric implements Collection
     {
         $this->items = [];
         foreach ($items as $key => $item) {
-            $this->add($item, self::KEY_MODE === self::KEYS_METHOD ? null : $key);
+            $this->add($item, $this::KEY_MODE === $this::KEYS_METHOD ? null : $key);
         }
         return $this;
     }
@@ -101,7 +99,7 @@ class CollectionGeneric implements Collection
         $this->validateItemType($item);
         $this->validateKeyMode($key);
 
-        $key = self::KEY_MODE === self::KEYS_METHOD ? $this->getItemKey($item) : $key;
+        $key = $this::KEY_MODE === $this::KEYS_METHOD ? $this->getItemKey($item) : $key;
 
         if ($this->exist($key)) {
             throw new CollectionException(CollectionException::MESSAGE_DUPLICATE);
@@ -180,11 +178,11 @@ class CollectionGeneric implements Collection
      */
     final protected function validateKeyMode(mixed $key): void
     {
-        if (self::KEY_MODE === self::KEYS_FORCED && $key === null) {
+        if ($this::KEY_MODE === $this::KEYS_FORCED && $key === null) {
             throw new CollectionException(CollectionException::MESSAGE_KEY_MODE_ERROR);
         }
 
-        if (self::KEY_MODE === self::KEYS_METHOD && $key !== null) {
+        if ($this::KEY_MODE === $this::KEYS_METHOD && $key !== null) {
             throw new CollectionException(CollectionException::MESSAGE_KEY_MODE_ERROR);
         }
     }
