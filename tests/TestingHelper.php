@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use MyDramGames\Utils\Player\PlayerAnonymous;
+use MyDramGames\Utils\Player\PlayerAnonymousGeneric;
 use MyDramGames\Utils\Player\PlayerRegistered;
 use MyDramGames\Utils\Player\PlayerRegisteredGeneric;
 
@@ -20,6 +22,13 @@ class TestingHelper
         ]
     ];
 
+    private static array $playerAnonymousAttributes = [
+        [
+            'id' => '1111111-anon-1111111',
+            'name' => 'Test 1 Anonymous',
+        ],
+    ];
+
     public static function getPlayerRegistered(bool $premium = false): PlayerRegistered
     {
         $playerKey = $premium ? 0 : 1;
@@ -27,6 +36,14 @@ class TestingHelper
             self::$playerRegisteredAttributes[$playerKey]['id'],
             self::$playerRegisteredAttributes[$playerKey]['name'],
             self::$playerRegisteredAttributes[$playerKey]['premium'],
+        ));
+    }
+
+    public static function getPlayerAnonymous(int $index = 0): PlayerAnonymous
+    {
+        return (new PlayerAnonymousGeneric(
+            self::$playerAnonymousAttributes[$index]['id'],
+            self::$playerAnonymousAttributes[$index]['name']
         ));
     }
 }
