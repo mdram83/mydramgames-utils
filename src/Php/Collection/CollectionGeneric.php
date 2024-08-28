@@ -2,8 +2,6 @@
 
 namespace MyDramGames\Utils\Php\Collection;
 
-use Tests\Php\Collection\CollectionTrait;
-
 /**
  * To support specific collection types, define TYPE_CLASS or TYPE_PRIMITIVE values in child class.
  * To support specific key mode, define KEY_MODE value (loose, forced, method) in child class.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Php\Collection;
+namespace MyDramGames\Utils\Php\Collection;
 
 use MyDramGames\Utils\Exceptions\CollectionException;
 
