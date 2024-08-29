@@ -4,8 +4,14 @@ namespace MyDramGames\Utils\Php\Collection;
 
 use MyDramGames\Utils\Exceptions\CollectionException;
 
-trait CollectionTrait
+/**
+ * To support specific collection types, define TYPE_CLASS or TYPE_PRIMITIVE values in child class.
+ * To support specific key mode, define KEY_MODE value (loose, forced, method) in child class.
+ */
+class CollectionPoweredExtendable implements Collection
 {
+    protected CollectionEngine $engine;
+
     protected const ?string TYPE_CLASS = null;
     protected const ?string TYPE_PRIMITIVE = null;
 
@@ -21,40 +27,63 @@ trait CollectionTrait
     protected const int KEY_MODE = self::KEYS_LOOSE;
 
     /**
-     * @throws CollectionException
-     */
-    final public function __construct(array $items = [])
-    {
-        $this->reset($items);
-    }
-
-    /**
-     * Actual insertion of item to collection that happens after required validations
-     * @param mixed $item
-     * @param mixed|null $key
-     * @return void
-     */
-    abstract protected function insert(mixed $item, mixed $key = null): void;
-
-    /**
      * Generate item key based on item. Adjust this method in child class when setting KEY_MODE to KEYS_CALLABLE.
      * @param mixed $item
      * @return mixed
      */
-    abstract protected function getItemKey(mixed $item): mixed;
+    protected function getItemKey(mixed $item): mixed
+    {
+        return null;
+    }
+
+    /**
+     * @throws CollectionException
+     */
+    final public function __construct(CollectionEngine $engine, array $items = [])
+    {
+        $this->engine = $engine->reset();
+        $this->reset($items);
+    }
+
+    final public function count(): int
+    {
+        return $this->engine->count();
+    }
+
+    final public function isEmpty(): bool
+    {
+        return $this->engine->isEmpty();
+    }
+
+    final public function exist(mixed $key): bool
+    {
+        return $this->engine->exist($key);
+    }
+
+    final public function toArray(): array
+    {
+        return $this->engine->toArray();
+    }
+
+    final public function each(callable $callback): static
+    {
+        return $this->reset($this->engine->each($callback)->toArray());
+    }
+
+    final public function filter(callable $callback): static
+    {
+        return new static($this->engine->clone()->reset(), $this->engine->filter($callback)->toArray());
+    }
 
     final public function shuffle(): static
     {
-        $collectionItems = $this->toArray();
+        $this->engine->shuffle();
+        return $this;
+    }
 
-        $keys = array_keys($collectionItems);
-        shuffle($keys);
-
-        $items = [];
-        foreach ($keys as $key) {
-            $items[$key] = $this->items[$key];
-        }
-        return $this->reset($items);
+    final public function random(): mixed
+    {
+        return $this->engine->random();
     }
 
     final public function reset(array $items = []): static
@@ -73,40 +102,42 @@ trait CollectionTrait
 
         $key = $this::KEY_MODE === $this::KEYS_METHOD ? $this->getItemKey($item) : $key;
 
-        $this->validateNotDuplicate($key);
-        $this->insert($item, $key);
+        $this->engine->add($item, $key);
 
         return $this;
     }
 
-    /**
-     * @throws CollectionException
-     */
-    final protected function validateNotEmpty(): void
+    final public function getOne(mixed $key): mixed
     {
-        if ($this->isEmpty()) {
-            throw new CollectionException(CollectionException::MESSAGE_NO_ELEMENTS);
-        }
+        return $this->engine->getOne($key);
+    }
+
+    final public function removeOne(mixed $key): void
+    {
+        $this->engine->removeOne($key);
+    }
+
+    final public function removeAll(): void
+    {
+        $this->engine->removeAll();
+    }
+
+    final public function pullFirst(): mixed
+    {
+        return $this->engine->pullFirst();
+    }
+
+    final public function pullLast(): mixed
+    {
+        return $this->engine->pullLast();
     }
 
     /**
      * @throws CollectionException
      */
-    final protected function validateNotDuplicate(mixed $key = null): void
+    final public function clone(): static
     {
-        if ($this->exist($key)) {
-            throw new CollectionException(CollectionException::MESSAGE_DUPLICATE);
-        }
-    }
-
-    /**
-     * @throws CollectionException
-     */
-    final protected function validateExists(mixed $key): void
-    {
-        if (!$this->exist($key)) {
-            throw new CollectionException(CollectionException::MESSAGE_MISSING_KEY);
-        }
+        return new static($this->engine->clone()->reset(), $this->engine->toArray());
     }
 
     /**

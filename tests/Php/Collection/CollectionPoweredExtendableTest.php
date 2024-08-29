@@ -3,21 +3,24 @@
 namespace Tests\Php\Collection;
 
 use MyDramGames\Utils\Exceptions\CollectionException;
-use MyDramGames\Utils\Php\Collection\CollectionGeneric;
+use MyDramGames\Utils\Php\Collection\CollectionEngine;
+use MyDramGames\Utils\Php\Collection\CollectionEnginePhpArray;
+use MyDramGames\Utils\Php\Collection\CollectionPoweredExtendable;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use Tests\TestingHelper;
 
-class CollectionGenericTest extends TestCase
+class CollectionPoweredExtendableTest extends TestCase
 {
-    private CollectionGeneric $collectionEmpty;
-    private CollectionGeneric $collection;
+    private CollectionPoweredExtendable $collectionEmpty;
+    private CollectionPoweredExtendable $collection;
     private array $items;
 
     public function setUp(): void
     {
         $this->items = ['A' => 1, 'B' => 2, 'C' => 3];
-        $this->collectionEmpty = new CollectionGeneric();
-        $this->collection = new CollectionGeneric($this->items);
+        $this->collectionEmpty = new CollectionPoweredExtendable(TestingHelper::getCollectionEngine());
+        $this->collection = new CollectionPoweredExtendable(TestingHelper::getCollectionEngine(), $this->items);
     }
 
     public function testCount(): void
@@ -41,7 +44,7 @@ class CollectionGenericTest extends TestCase
     public function testToArray(): void
     {
         $itemsAdd = array_merge($this->items, [4]);
-        $collectionAdd = new CollectionGeneric($itemsAdd);
+        $collectionAdd = new CollectionPoweredExtendable(TestingHelper::getCollectionEngine(), $itemsAdd);
 
         $this->assertSame($this->items, $this->collection->toArray());
         $this->assertSame(array_values($itemsAdd), array_values($collectionAdd->toArray()));
@@ -221,7 +224,7 @@ class CollectionGenericTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $incompatibleItems = ['A' => 1, 'B' => 2];
-        $collection = new class($incompatibleItems) extends CollectionGeneric {
+        $collection = new class(TestingHelper::getCollectionEngine(), $incompatibleItems) extends CollectionPoweredExtendable {
             protected const ?string TYPE_PRIMITIVE = 'string';
         };
     }
@@ -232,8 +235,8 @@ class CollectionGenericTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $incompatibleItems = ['A' => (new stdClass()), 'B' => (new stdClass())];
-        $collection = new class($incompatibleItems) extends CollectionGeneric {
-            protected const ?string TYPE_CLASS = CollectionGeneric::class;
+        $collection = new class(TestingHelper::getCollectionEngine(), $incompatibleItems) extends CollectionPoweredExtendable {
+            protected const ?string TYPE_CLASS = CollectionPoweredExtendable::class;
         };
     }
 
@@ -243,7 +246,7 @@ class CollectionGenericTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $items = ['A' => 1, 'B' => 2];
-        $collection = new class($items) extends CollectionGeneric {
+        $collection = new class(TestingHelper::getCollectionEngine(), $items) extends CollectionPoweredExtendable {
             protected const ?string TYPE_PRIMITIVE = 'int';
         };
         $collection->add('incompatible-string');
@@ -255,10 +258,10 @@ class CollectionGenericTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $items = ['A' => (new stdClass()), 'B' => (new stdClass())];
-        $collection = new class($items) extends CollectionGeneric {
+        $collection = new class(TestingHelper::getCollectionEngine(), $items) extends CollectionPoweredExtendable {
             protected const ?string TYPE_CLASS = stdClass::class;
         };
-        $collection->add(new CollectionGeneric());
+        $collection->add('incompatible-object');
     }
 
     public function testEachThrowExceptionIncompatiblePrimitiveType(): void
@@ -267,7 +270,7 @@ class CollectionGenericTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $items = ['A' => 1, 'B' => 2];
-        $collection = new class($items) extends CollectionGeneric {
+        $collection = new class(TestingHelper::getCollectionEngine(), $items) extends CollectionPoweredExtendable {
             protected const ?string TYPE_PRIMITIVE = 'int';
         };
         $incompatibleCallback = fn($item) => 'incompatible-string';
@@ -280,10 +283,10 @@ class CollectionGenericTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $items = ['A' => (new stdClass()), 'B' => (new stdClass())];
-        $collection = new class($items) extends CollectionGeneric {
+        $collection = new class(TestingHelper::getCollectionEngine(), $items) extends CollectionPoweredExtendable {
             protected const ?string TYPE_CLASS = stdClass::class;
         };
-        $incompatibleCallback = fn($item) => new CollectionGeneric();
+        $incompatibleCallback = fn($item) => 'incompatible-object';
         $collection->each($incompatibleCallback);
     }
 
@@ -292,7 +295,7 @@ class CollectionGenericTest extends TestCase
         $this->expectException(CollectionException::class);
         $this->expectExceptionMessage(CollectionException::MESSAGE_KEY_MODE_ERROR);
 
-        $collection = new class($this->items) extends CollectionGeneric {
+        $collection = new class(TestingHelper::getCollectionEngine(), $this->items) extends CollectionPoweredExtendable {
             protected const int KEY_MODE = self::KEYS_FORCED;
         };
         $collection->add(4);
@@ -303,7 +306,7 @@ class CollectionGenericTest extends TestCase
         $this->expectException(CollectionException::class);
         $this->expectExceptionMessage(CollectionException::MESSAGE_KEY_MODE_ERROR);
 
-        $collection = new class($this->items) extends CollectionGeneric {
+        $collection = new class(TestingHelper::getCollectionEngine(), $this->items) extends CollectionPoweredExtendable {
             protected const int KEY_MODE = self::KEYS_METHOD;
             protected function getItemKey(mixed $item): mixed
             {
@@ -315,13 +318,14 @@ class CollectionGenericTest extends TestCase
 
     public function testAddKeysModeMethod(): void
     {
-        $collection = new class($this->items) extends CollectionGeneric {
+        $collection = new class(TestingHelper::getCollectionEngine(), $this->items) extends CollectionPoweredExtendable {
             protected const int KEY_MODE = self::KEYS_METHOD;
             protected function getItemKey(mixed $item): mixed
             {
                 return $item * 2;
             }
         };
+
         $collection->add(4);
 
         $this->assertSame([2 => 1, 4 => 2, 6 => 3, 8 => 4], $collection->toArray());

@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use MyDramGames\Utils\Php\Collection\CollectionEngine;
+use MyDramGames\Utils\Php\Collection\CollectionEnginePhpArray;
 use MyDramGames\Utils\Player\PlayerAnonymous;
 use MyDramGames\Utils\Player\PlayerAnonymousGeneric;
 use MyDramGames\Utils\Player\PlayerRegistered;
@@ -45,5 +47,10 @@ class TestingHelper
             self::$playerAnonymousAttributes[$index]['id'],
             self::$playerAnonymousAttributes[$index]['name']
         ));
+    }
+
+    public static function getCollectionEngine(): CollectionEngine
+    {
+        return new CollectionEnginePhpArray();
     }
 }

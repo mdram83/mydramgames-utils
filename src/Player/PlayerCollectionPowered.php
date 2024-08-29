@@ -2,9 +2,9 @@
 
 namespace MyDramGames\Utils\Player;
 
-use MyDramGames\Utils\Php\Collection\CollectionGeneric;
+use MyDramGames\Utils\Php\Collection\CollectionPoweredExtendable;
 
-class PlayerCollectionGeneric extends CollectionGeneric implements PlayerCollection
+class PlayerCollectionPowered extends CollectionPoweredExtendable implements PlayerCollection
 {
     protected const ?string TYPE_CLASS =  Player::class;
     protected const int KEY_MODE = self::KEYS_METHOD;

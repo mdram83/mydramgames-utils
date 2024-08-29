@@ -6,13 +6,13 @@ use MyDramGames\Utils\Exceptions\CollectionException;
 use MyDramGames\Utils\Php\Collection\Collection;
 use MyDramGames\Utils\Player\Player;
 use MyDramGames\Utils\Player\PlayerCollection;
-use MyDramGames\Utils\Player\PlayerCollectionGeneric;
+use MyDramGames\Utils\Player\PlayerCollectionPowered;
 use PHPUnit\Framework\TestCase;
 use Tests\TestingHelper;
 
-class PlayerCollectionGenericTest extends TestCase
+class PlayerCollectionPoweredTest extends TestCase
 {
-    private PlayerCollectionGeneric $collection;
+    private PlayerCollectionPowered $collection;
     private Player $playerOne;
     private Player $playerTwo;
     private Player $playerThree;
@@ -24,7 +24,7 @@ class PlayerCollectionGenericTest extends TestCase
         $this->playerTwo = TestingHelper::getPlayerAnonymous();
         $this->playerThree = TestingHelper::getPlayerRegistered(true);
         $this->initialPlayers = [$this->playerOne, $this->playerTwo];
-        $this->collection = new PlayerCollectionGeneric($this->initialPlayers);
+        $this->collection = new PlayerCollectionPowered(TestingHelper::getCollectionEngine(), $this->initialPlayers);
     }
 
     public function testInterface(): void
