@@ -22,7 +22,6 @@ trait CollectionEngineTrait
      */
     abstract protected function insert(mixed $item, mixed $key = null): void;
 
-    // TODO common between engine and extendable but extendable will just use engine call (no common thread required)
     final public function shuffle(): static
     {
         $keys = array_keys($this->toArray());
@@ -37,14 +36,12 @@ trait CollectionEngineTrait
 
     final public function add(mixed $item, mixed $key = null): static
     {
-        // TODO duplicates validation could be then removed from Extendable...
         $this->validateNotDuplicate($key);
         $this->insert($item, $key);
 
         return $this;
     }
 
-    // TODO common between engine and extendable, but will Extendable require this at all then when calling engine?
     /**
      * @throws CollectionException
      */
@@ -55,7 +52,6 @@ trait CollectionEngineTrait
         }
     }
 
-    // TODO common between engine and extendable, but will Extendable require this at all then when calling engine?
     /**
      * @throws CollectionException
      */
@@ -66,7 +62,6 @@ trait CollectionEngineTrait
         }
     }
 
-    // TODO common between engine and extendable, but will Extendable require this at all then when calling engine?
     /**
      * @throws CollectionException
      */
