@@ -15,23 +15,23 @@ interface PlayingCardDealer
     /**
      * Shuffle cards and distribute according to provided definitions. @see DealDefinitionItem for details.
      * @param PlayingCardCollection $stock
-     * @param DealDefinitionCollection $definition
+     * @param DealDefinitionCollection $definitions
      * @param bool $shuffleStock
      * @return void
      */
-    public function dealCards(PlayingCardCollection $stock, DealDefinitionCollection $definition, bool $shuffleStock = true): void;
+    public function dealCards(PlayingCardCollection $stock, DealDefinitionCollection $definitions, bool $shuffleStock = true): void;
 
     // TODO move to PlayingCardCollection new method getMany(array $keys) that utilize Collection filter(callable $callback);
-    public function getCardsByKeys(PlayingCardCollection $deck, array $keys,): PlayingCardCollection;
+    public function getCardsByKeys(PlayingCardCollection $deck, array $keys): PlayingCardCollection;
 
     // TODO move to Collection new method keys();
     public function getCardsKeys(PlayingCardCollection $stock): array;
 
     // TODO move to PlayingCardCollection new method getCardsSortedByKeys(array $keys) that utilize Collection new method sort(callable);
-    public function getSortedCards(PlayingCardCollection $stock, array $keys,): PlayingCardCollection;
+    public function getSortedCards(PlayingCardCollection $stock, array $keys): PlayingCardCollection;
 
     // TODO move to PlayingCardCollection new method pullFirstCard() that use Collection method pullFirst();
-    public function pullFirstCard(PlayingCardCollection $stock, bool $strict = false): ?PlayingCard;
+    public function pullFirstCard(PlayingCardCollection $stock): ?PlayingCard;
 
 
     /**
