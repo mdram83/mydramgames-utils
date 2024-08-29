@@ -3,10 +3,8 @@
 namespace Tests\Php\Collection;
 
 use MyDramGames\Utils\Exceptions\CollectionException;
-use MyDramGames\Utils\Php\Collection\CollectionEngine;
 use MyDramGames\Utils\Php\Collection\CollectionEnginePhpArray;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class CollectionEnginePhpArrayTest extends TestCase
 {
@@ -215,117 +213,4 @@ class CollectionEnginePhpArrayTest extends TestCase
         $this->assertEquals(0, $clone->count());
         $this->assertEquals(count($this->items), $this->collection->count());
     }
-
-//    public function testResetThrowExceptionIncompatiblePrimitiveType(): void
-//    {
-//        $this->expectException(CollectionException::class);
-//        $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
-//
-//        $incompatibleItems = ['A' => 1, 'B' => 2];
-//        $collection = new class($incompatibleItems) extends CollectionGeneric {
-//            protected const ?string TYPE_PRIMITIVE = 'string';
-//        };
-//    }
-//
-//    public function testResetThrowExceptionIncompatibleClassType(): void
-//    {
-//        $this->expectException(CollectionException::class);
-//        $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
-//
-//        $incompatibleItems = ['A' => (new stdClass()), 'B' => (new stdClass())];
-//        $collection = new class($incompatibleItems) extends CollectionGeneric {
-//            protected const ?string TYPE_CLASS = CollectionGeneric::class;
-//        };
-//    }
-//
-//    public function testAddThrowExceptionIncompatiblePrimitiveType(): void
-//    {
-//        $this->expectException(CollectionException::class);
-//        $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
-//
-//        $items = ['A' => 1, 'B' => 2];
-//        $collection = new class($items) extends CollectionGeneric {
-//            protected const ?string TYPE_PRIMITIVE = 'int';
-//        };
-//        $collection->add('incompatible-string');
-//    }
-//
-//    public function testAddThrowExceptionIncompatibleClassType(): void
-//    {
-//        $this->expectException(CollectionException::class);
-//        $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
-//
-//        $items = ['A' => (new stdClass()), 'B' => (new stdClass())];
-//        $collection = new class($items) extends CollectionGeneric {
-//            protected const ?string TYPE_CLASS = stdClass::class;
-//        };
-//        $collection->add(new CollectionGeneric());
-//    }
-//
-//    public function testEachThrowExceptionIncompatiblePrimitiveType(): void
-//    {
-//        $this->expectException(CollectionException::class);
-//        $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
-//
-//        $items = ['A' => 1, 'B' => 2];
-//        $collection = new class($items) extends CollectionGeneric {
-//            protected const ?string TYPE_PRIMITIVE = 'int';
-//        };
-//        $incompatibleCallback = fn($item) => 'incompatible-string';
-//        $collection->each($incompatibleCallback);
-//    }
-//
-//    public function testEachThrowExceptionIncompatibleClassType(): void
-//    {
-//        $this->expectException(CollectionException::class);
-//        $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
-//
-//        $items = ['A' => (new stdClass()), 'B' => (new stdClass())];
-//        $collection = new class($items) extends CollectionGeneric {
-//            protected const ?string TYPE_CLASS = stdClass::class;
-//        };
-//        $incompatibleCallback = fn($item) => new CollectionGeneric();
-//        $collection->each($incompatibleCallback);
-//    }
-//
-//    public function testAddThrowExceptionKeysModeForcedAndKeysMissing(): void
-//    {
-//        $this->expectException(CollectionException::class);
-//        $this->expectExceptionMessage(CollectionException::MESSAGE_KEY_MODE_ERROR);
-//
-//        $collection = new class($this->items) extends CollectionGeneric {
-//            protected const int KEY_MODE = self::KEYS_FORCED;
-//        };
-//        $collection->add(4);
-//    }
-//
-//    public function testAddThrowExceptionKeysModeMethodAndKeyProvided(): void
-//    {
-//        $this->expectException(CollectionException::class);
-//        $this->expectExceptionMessage(CollectionException::MESSAGE_KEY_MODE_ERROR);
-//
-//        $collection = new class($this->items) extends CollectionGeneric {
-//            protected const int KEY_MODE = self::KEYS_METHOD;
-//            protected function getItemKey(mixed $item): mixed
-//            {
-//                return $item * 2;
-//            }
-//        };
-//        $collection->add(4, 'D');
-//    }
-//
-//    public function testAddKeysModeMethod(): void
-//    {
-//        $collection = new class($this->items) extends CollectionGeneric {
-//            protected const int KEY_MODE = self::KEYS_METHOD;
-//            protected function getItemKey(mixed $item): mixed
-//            {
-//                return $item * 2;
-//            }
-//        };
-//        $collection->add(4);
-//
-//        $this->assertSame([2 => 1, 4 => 2, 6 => 3, 8 => 4], $collection->toArray());
-//    }
-
 }
