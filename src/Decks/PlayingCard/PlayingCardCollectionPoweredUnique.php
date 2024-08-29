@@ -2,6 +2,7 @@
 
 namespace MyDramGames\Utils\Decks\PlayingCard;
 
+use MyDramGames\Utils\Exceptions\PlayingCardCollectionException;
 use MyDramGames\Utils\Php\Collection\CollectionPoweredExtendable;
 
 class PlayingCardCollectionPoweredUnique extends CollectionPoweredExtendable implements PlayingCardCollection
@@ -12,5 +13,44 @@ class PlayingCardCollectionPoweredUnique extends CollectionPoweredExtendable imp
     protected function getItemKey(mixed $item): mixed
     {
         return $item->getKey();
+    }
+
+    public function countMatchingKeysCombinations(array $keysCombinations): int
+    {
+        $this->validateKeysCombinations($keysCombinations);
+
+        return array_reduce($keysCombinations, function ($carry, $combination) {
+
+            if ($combination === []) {
+                return $carry;
+            }
+
+            foreach ($combination as $element) {
+                if (!$this->exist($element)) {
+                    return $carry;
+                }
+            }
+
+            return $carry + 1;
+
+        }, 0);
+    }
+
+
+    /**
+     * @throws PlayingCardCollectionException
+     */
+    private function validateKeysCombinations(array $keysCombinations): void
+    {
+        foreach ($keysCombinations as $combination) {
+            if (!is_array($combination)) {
+                throw new PlayingCardCollectionException(PlayingCardCollectionException::MESSAGE_INCORRECT_COMBINATION);
+            }
+            foreach ($combination as $element) {
+                if (!is_string($element) || $element === '') {
+                    throw new PlayingCardCollectionException(PlayingCardCollectionException::MESSAGE_INCORRECT_COMBINATION);
+                }
+            }
+        }
     }
 }
