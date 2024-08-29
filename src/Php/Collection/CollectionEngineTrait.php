@@ -7,14 +7,6 @@ use MyDramGames\Utils\Exceptions\CollectionException;
 trait CollectionEngineTrait
 {
     /**
-     * @throws CollectionException
-     */
-    final public function __construct(array $items = [])
-    {
-        $this->reset($items);
-    }
-
-    /**
      * Actual insertion of item to collection that happens after required validations
      * @param mixed $item
      * @param mixed|null $key

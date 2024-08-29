@@ -2,11 +2,21 @@
 
 namespace MyDramGames\Utils\Php\Collection;
 
+use MyDramGames\Utils\Exceptions\CollectionException;
+
 class CollectionEnginePhpArray implements CollectionEngine
 {
     use CollectionEngineTrait;
 
     protected array $items;
+
+    /**
+     * @throws CollectionException
+     */
+    public function __construct(array $items = [])
+    {
+        $this->reset($items);
+    }
 
     /**
      * @inheritDoc
