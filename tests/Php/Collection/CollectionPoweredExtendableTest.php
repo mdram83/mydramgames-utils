@@ -3,8 +3,6 @@
 namespace Tests\Php\Collection;
 
 use MyDramGames\Utils\Exceptions\CollectionException;
-use MyDramGames\Utils\Php\Collection\CollectionEngine;
-use MyDramGames\Utils\Php\Collection\CollectionEnginePhpArray;
 use MyDramGames\Utils\Php\Collection\CollectionPoweredExtendable;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -224,7 +222,7 @@ class CollectionPoweredExtendableTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $incompatibleItems = ['A' => 1, 'B' => 2];
-        $collection = new class(TestingHelper::getCollectionEngine(), $incompatibleItems) extends CollectionPoweredExtendable {
+        $collection = new class(null, $incompatibleItems) extends CollectionPoweredExtendable {
             protected const ?string TYPE_PRIMITIVE = 'string';
         };
     }
@@ -235,7 +233,7 @@ class CollectionPoweredExtendableTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $incompatibleItems = ['A' => (new stdClass()), 'B' => (new stdClass())];
-        $collection = new class(TestingHelper::getCollectionEngine(), $incompatibleItems) extends CollectionPoweredExtendable {
+        $collection = new class(null, $incompatibleItems) extends CollectionPoweredExtendable {
             protected const ?string TYPE_CLASS = CollectionPoweredExtendable::class;
         };
     }
@@ -246,7 +244,7 @@ class CollectionPoweredExtendableTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $items = ['A' => 1, 'B' => 2];
-        $collection = new class(TestingHelper::getCollectionEngine(), $items) extends CollectionPoweredExtendable {
+        $collection = new class(null, $items) extends CollectionPoweredExtendable {
             protected const ?string TYPE_PRIMITIVE = 'int';
         };
         $collection->add('incompatible-string');
@@ -258,7 +256,7 @@ class CollectionPoweredExtendableTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $items = ['A' => (new stdClass()), 'B' => (new stdClass())];
-        $collection = new class(TestingHelper::getCollectionEngine(), $items) extends CollectionPoweredExtendable {
+        $collection = new class(null, $items) extends CollectionPoweredExtendable {
             protected const ?string TYPE_CLASS = stdClass::class;
         };
         $collection->add('incompatible-object');
@@ -270,7 +268,7 @@ class CollectionPoweredExtendableTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $items = ['A' => 1, 'B' => 2];
-        $collection = new class(TestingHelper::getCollectionEngine(), $items) extends CollectionPoweredExtendable {
+        $collection = new class(null, $items) extends CollectionPoweredExtendable {
             protected const ?string TYPE_PRIMITIVE = 'int';
         };
         $incompatibleCallback = fn($item) => 'incompatible-string';
@@ -283,7 +281,7 @@ class CollectionPoweredExtendableTest extends TestCase
         $this->expectExceptionMessage(CollectionException::MESSAGE_INCOMPATIBLE);
 
         $items = ['A' => (new stdClass()), 'B' => (new stdClass())];
-        $collection = new class(TestingHelper::getCollectionEngine(), $items) extends CollectionPoweredExtendable {
+        $collection = new class(null, $items) extends CollectionPoweredExtendable {
             protected const ?string TYPE_CLASS = stdClass::class;
         };
         $incompatibleCallback = fn($item) => 'incompatible-object';
@@ -295,7 +293,7 @@ class CollectionPoweredExtendableTest extends TestCase
         $this->expectException(CollectionException::class);
         $this->expectExceptionMessage(CollectionException::MESSAGE_KEY_MODE_ERROR);
 
-        $collection = new class(TestingHelper::getCollectionEngine(), $this->items) extends CollectionPoweredExtendable {
+        $collection = new class(null, $this->items) extends CollectionPoweredExtendable {
             protected const int KEY_MODE = self::KEYS_FORCED;
         };
         $collection->add(4);
@@ -306,7 +304,7 @@ class CollectionPoweredExtendableTest extends TestCase
         $this->expectException(CollectionException::class);
         $this->expectExceptionMessage(CollectionException::MESSAGE_KEY_MODE_ERROR);
 
-        $collection = new class(TestingHelper::getCollectionEngine(), $this->items) extends CollectionPoweredExtendable {
+        $collection = new class(null, $this->items) extends CollectionPoweredExtendable {
             protected const int KEY_MODE = self::KEYS_METHOD;
             protected function getItemKey(mixed $item): mixed
             {
@@ -318,7 +316,7 @@ class CollectionPoweredExtendableTest extends TestCase
 
     public function testAddKeysModeMethod(): void
     {
-        $collection = new class(TestingHelper::getCollectionEngine(), $this->items) extends CollectionPoweredExtendable {
+        $collection = new class(null, $this->items) extends CollectionPoweredExtendable {
             protected const int KEY_MODE = self::KEYS_METHOD;
             protected function getItemKey(mixed $item): mixed
             {

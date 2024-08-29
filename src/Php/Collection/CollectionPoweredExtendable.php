@@ -39,9 +39,9 @@ class CollectionPoweredExtendable implements Collection
     /**
      * @throws CollectionException
      */
-    final public function __construct(CollectionEngine $engine, array $items = [])
+    final public function __construct(CollectionEngine $engine = null, array $items = [])
     {
-        $this->engine = $engine->reset();
+        $this->engine = $engine?->reset() ?? new CollectionEnginePhpArray();
         $this->reset($items);
     }
 
