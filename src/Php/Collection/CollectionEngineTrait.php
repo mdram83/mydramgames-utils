@@ -14,18 +14,6 @@ trait CollectionEngineTrait
      */
     abstract protected function insert(mixed $item, mixed $key = null): void;
 
-    final public function shuffle(): static
-    {
-        $keys = array_keys($this->toArray());
-        shuffle($keys);
-
-        $items = [];
-        foreach ($keys as $key) {
-            $items[$key] = $this->items[$key];
-        }
-        return $this->reset($items);
-    }
-
     final public function add(mixed $item, mixed $key = null): static
     {
         $this->validateNotDuplicate($key);

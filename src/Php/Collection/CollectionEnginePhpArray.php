@@ -13,7 +13,7 @@ class CollectionEnginePhpArray implements CollectionEngine
     /**
      * @throws CollectionException
      */
-    public function __construct(array $items = [])
+    final public function __construct(array $items = [])
     {
         $this->reset($items);
     }
@@ -65,6 +65,22 @@ class CollectionEnginePhpArray implements CollectionEngine
     final public function filter(callable $callback): static
     {
         return new static(array_filter($this->items, $callback));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final public function shuffle(): static
+    {
+        $keys = array_keys($this->items);
+        shuffle($keys);
+
+        $items = [];
+        foreach ($keys as $key) {
+            $items[$key] = $this->items[$key];
+        }
+
+        return $this->reset($items);
     }
 
     /**
