@@ -1,6 +1,8 @@
 <?php
 
-namespace MyDramGames\Utils\Decks\PlayingCard;
+namespace MyDramGames\Utils\Decks\PlayingCard\Support;
+
+use MyDramGames\Utils\Decks\PlayingCard\PlayingCardCollection;
 
 interface PlayingCardDeckProvider
 {
