@@ -8,10 +8,12 @@ use MyDramGames\Utils\Decks\PlayingCard\PlayingCardStocksCollection;
 
 interface PlayingCardDealer
 {
-//    public function getEmptyStock(bool $unique = true): PlayingCardCollection; // TODO not needed, install in dedicated GameServicesProvider to use within specific GamePlay
+
+    // Not needed, install in dedicated GameServicesProvider to use within specific GamePlay
+    // public function getEmptyStock(bool $unique = true): PlayingCardCollection;
 
     /**
-     * Shuffle cards and distribute according to provided definitions
+     * Shuffle cards and distribute according to provided definitions. @see DealDefinitionItem for details.
      * @param PlayingCardCollection $stock
      * @param DealDefinitionCollection $definition
      * @param bool $shuffleStock
@@ -19,22 +21,16 @@ interface PlayingCardDealer
      */
     public function dealCards(PlayingCardCollection $stock, DealDefinitionCollection $definition, bool $shuffleStock = true): void;
 
-    // TODO move to Collection new method getMany(array $keys);
-    public function getCardsByKeys(
-        PlayingCardCollection $deck,
-        array $keys,
-    ): PlayingCardCollection;
+    // TODO move to PlayingCardCollection new method getMany(array $keys) that utilize Collection filter(callable $callback);
+    public function getCardsByKeys(PlayingCardCollection $deck, array $keys,): PlayingCardCollection;
 
     // TODO move to Collection new method keys();
     public function getCardsKeys(PlayingCardCollection $stock): array;
 
-    // TODO move to Collection new method sort(callable);
-    public function getSortedCards(
-        PlayingCardCollection $stock,
-        array $keys,
-    ): PlayingCardCollection;
+    // TODO move to PlayingCardCollection new method getCardsSortedByKeys(array $keys) that utilize Collection new method sort(callable);
+    public function getSortedCards(PlayingCardCollection $stock, array $keys,): PlayingCardCollection;
 
-    // TODO use Collection method pullFirst();
+    // TODO move to PlayingCardCollection new method pullFirstCard() that use Collection method pullFirst();
     public function pullFirstCard(PlayingCardCollection $stock, bool $strict = false): ?PlayingCard;
 
 
@@ -72,7 +68,9 @@ interface PlayingCardDealer
      */
     public function collectCards(PlayingCardCollection $toStock, PlayingCardStocksCollection $fromStocks): PlayingCardCollection;
 
-//    public function hasStockAnyCombination(PlayingCardCollection $stock, array $combinations): bool; // TODO remove and use count... method instead
+    // Not needed, utilize PlayingCardCollection::countMatchingKeyCombinations
+    // public function hasStockAnyCombination(PlayingCardCollection $stock, array $combinations): bool;
 
-//    public function countStockMatchingCombinations(PlayingCardCollection $stock, array $combinations): int; // TODO moved to PlayingCardCollection
+    // Moved to PlayingCardCollection::countMatchingKeyCombinations
+    // public function countStockMatchingCombinations(PlayingCardCollection $stock, array $combinations): int;
 }

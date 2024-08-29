@@ -15,6 +15,7 @@ interface DealDefinitionItem
     public function getStock(): PlayingCardCollection;
 
     /**
+     * Setting number of cards to zero should result in distributing all remaining cards to such stocks one by one.
      * @return int
      */
     public function getNumberOfCards(): int;
