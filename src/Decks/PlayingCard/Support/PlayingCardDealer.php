@@ -12,13 +12,20 @@ interface PlayingCardDealer
     // public function getEmptyStock(bool $unique = true): PlayingCardCollection;
 
     /**
-     * Shuffle cards and distribute according to provided definitions. @see DealDefinitionItem for details.
+     * Shuffle cards and distribute according to provided definitions.
      * @param PlayingCardCollection $stock
      * @param DealDefinitionCollection $definitions
-     * @param bool $shuffleStock
+     * @param bool $shuffleStockPriorToDealing
+     * @param bool $dealOneCardPerDefinition when false, first definitions stock get requested cards, then next stocks
      * @return void
+     * @see DealDefinitionItem for details.
      */
-    public function dealCards(PlayingCardCollection $stock, DealDefinitionCollection $definitions, bool $shuffleStock = true): void;
+    public function dealCards(
+        PlayingCardCollection $stock,
+        DealDefinitionCollection $definitions,
+        bool $shuffleStockPriorToDealing = true,
+        bool $dealOneCardPerDefinition = true,
+    ): void;
 
     // Not needed, added Collection::keys() method instead.
     // TODO test return types conflicts in first implementation (for this one and below...)
