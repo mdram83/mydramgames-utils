@@ -15,4 +15,14 @@ interface PlayingCardCollection extends Collection
      * @throws PlayingCardCollectionException
      */
     public function countMatchingKeysCombinations(array $keysCombinations): int;
+
+    /**
+     * Sort collection by specific order of keys provided in array. Modifies original collection.
+     * Keys provided in parameter has priority over keys missing in parameter when sorting.
+     * Structure of $keys should be [key-1, key-2 ...]
+     * @param array $keys
+     * @return $this
+     * @throws PlayingCardCollectionException
+     */
+    public function sortByKeys(array $keys): static;
 }

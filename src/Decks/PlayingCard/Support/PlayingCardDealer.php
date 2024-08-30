@@ -2,7 +2,6 @@
 
 namespace MyDramGames\Utils\Decks\PlayingCard\Support;
 
-use MyDramGames\Utils\Decks\PlayingCard\PlayingCard;
 use MyDramGames\Utils\Decks\PlayingCard\PlayingCardCollection;
 use MyDramGames\Utils\Decks\PlayingCard\PlayingCardStocksCollection;
 
@@ -28,8 +27,9 @@ interface PlayingCardDealer
     // Not needed, added Collection::keys() method instead.
     // public function getCardsKeys(PlayingCardCollection $stock): array;
 
-    // TODO 4. move to PlayingCardCollection new method getCardsSortedByKeys(array $keys) that utilize Collection new method sort(callable);
-    public function getSortedCards(PlayingCardCollection $stock, array $keys): PlayingCardCollection;
+    // Not needed, added PlayingCardCollection::sortByKeys(array $keys) method
+    // TODO test return types conflicts in first implementation (for this one and below...)
+    // public function getSortedCards(PlayingCardCollection $stock, array $keys): PlayingCardCollection;
 
     // Not needed, added Collection::pullFirst() method instead.
     // TODO test return types conflicts in first implementation (for this one and below...)

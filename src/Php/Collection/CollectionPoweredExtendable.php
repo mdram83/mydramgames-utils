@@ -86,6 +86,12 @@ class CollectionPoweredExtendable implements Collection
         return $this;
     }
 
+    final public function sortKeys(callable $callback): static
+    {
+        $this->engine->sortKeys($callback);
+        return $this;
+    }
+
     final public function random(): mixed
     {
         return $this->engine->random();

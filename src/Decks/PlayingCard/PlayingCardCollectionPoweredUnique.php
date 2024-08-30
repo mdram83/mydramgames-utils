@@ -36,6 +36,17 @@ class PlayingCardCollectionPoweredUnique extends CollectionPoweredExtendable imp
         }, 0);
     }
 
+    public function sortByKeys(array $keys): static
+    {
+        return $this->sortKeys(function($keyOne, $keyTwo) use ($keys): int {
+            $keys = array_reverse($keys);
+
+            $keyOnePriority = !in_array($keyOne, $keys) ? -1 : array_search($keyOne, $keys);
+            $keyTwoPriority = !in_array($keyTwo, $keys) ? -1 : array_search($keyTwo, $keys);
+
+            return $keyOnePriority < $keyTwoPriority;
+        });
+    }
 
     /**
      * @throws PlayingCardCollectionException

@@ -94,6 +94,15 @@ class CollectionEnginePhpArray implements CollectionEngine
     /**
      * @inheritDoc
      */
+    final public function sortKeys(callable $callback): static
+    {
+        uksort($this->items, $callback);
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     final public function random(): mixed
     {
         $this->validateNotEmpty();
@@ -121,7 +130,7 @@ class CollectionEnginePhpArray implements CollectionEngine
     /**
      * @inheritDoc
      */
-    public function getMany(array $keys): static
+    final public function getMany(array $keys): static
     {
         $this->validateKeysInputArray($keys);
         $this->validateExistMany($keys);

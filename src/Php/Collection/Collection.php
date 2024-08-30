@@ -61,6 +61,13 @@ interface Collection
     public function shuffle(): static;
 
     /**
+     * Sort items in collection based on provided callback. Modifies original collection. Keep the keys unchanged.
+     * @param callable $callback
+     * @return $this
+     */
+    public function sortKeys(callable $callback): static;
+
+    /**
      * Return random item from collection or null if collection is empty
      * @return mixed
      * @throws CollectionException

@@ -66,4 +66,21 @@ class PlayingCardCollectionPoweredUniqueTest extends TestCase
         $this->assertEquals(1, $this->collection->countMatchingKeysCombinations([$combTrue1, $combFalse1]));
         $this->assertEquals(2, $this->collection->countMatchingKeysCombinations([$combTrue1, $combTrue2, $combFalse1, $combFalse2]));
     }
+
+    public function testSortByKeys(): void
+    {
+        $cardThree = $this->createMock(PlayingCard::class);
+        $cardThree->method('getKey')->willReturn('key-3');
+        $this->collection->add($cardThree);
+
+        $initialCollection = $this->collection->clone();
+        $initialKeys = $initialCollection->keys();
+
+        $orderedKeysAll = [$initialKeys[1], $initialKeys[2], $initialKeys[0]];
+        $incompleteKeys = [$initialKeys[2]];
+
+        $this->assertSame($orderedKeysAll, $this->collection->sortByKeys($orderedKeysAll)->keys());
+
+        $this->assertSame([$initialKeys[2], $initialKeys[0], $initialKeys[1]], $initialCollection->sortByKeys($incompleteKeys)->keys());
+    }
 }

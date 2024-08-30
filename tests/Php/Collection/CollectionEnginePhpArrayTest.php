@@ -247,4 +247,15 @@ class CollectionEnginePhpArrayTest extends TestCase
         $this->assertSame($requestedKeys, $requestedCollection->keys());
         $this->assertEquals(count($this->items), $this->collection->count());
     }
+
+    public function testSortKeys(): void
+    {
+        $initialKeys = array_keys($this->items);
+        $orderedKeys = [$initialKeys[1], $initialKeys[2], $initialKeys[0]];
+        $this->collection->sortKeys(function($keyOne, $keyTwo) use ($orderedKeys): int {
+            return array_search($keyOne, $orderedKeys) > array_search($keyTwo, $orderedKeys) ? 1 : 0;
+        });
+
+        $this->assertSame($orderedKeys, $this->collection->keys());
+    }
 }
