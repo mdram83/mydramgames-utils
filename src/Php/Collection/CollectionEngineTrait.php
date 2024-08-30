@@ -51,4 +51,26 @@ trait CollectionEngineTrait
             throw new CollectionException(CollectionException::MESSAGE_MISSING_KEY);
         }
     }
+
+    /**
+     * @throws CollectionException
+     */
+    final protected function validateExistMany(array $keys): void
+    {
+        if (array_diff($keys, $this->keys())) {
+            throw new CollectionException(CollectionException::MESSAGE_MISSING_KEY);
+        }
+    }
+
+    /**
+     * @throws CollectionException
+     */
+    final protected function validateKeysInputArray(array $keys): void
+    {
+        foreach ($keys as $key) {
+            if (!is_int($key) && !is_string($key)) {
+                throw new CollectionException(CollectionException::MESSAGE_KEYS_INPUTS);
+            }
+        }
+    }
 }

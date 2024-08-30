@@ -93,6 +93,15 @@ interface Collection
     public function getOne(mixed $key): mixed;
 
     /**
+     * Return copy of collection with elements with keys specified in array $keys (expected format ['key1', 'key2']).
+     * Does not modify original collection.
+     * @param array $keys
+     * @return $this
+     * @throws CollectionException
+     */
+    public function getMany(array $keys): static;
+
+    /**
      * Return single element from collection
      * @param mixed $key
      * @return void

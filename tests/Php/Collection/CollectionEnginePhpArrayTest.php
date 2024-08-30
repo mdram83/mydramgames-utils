@@ -219,4 +219,32 @@ class CollectionEnginePhpArrayTest extends TestCase
         $this->assertSame(array_keys($this->items), $this->collection->keys());
         $this->assertSame([], $this->collectionEmpty->keys());
     }
+
+    public function testGetManyThrowExceptionForNotFlatArray(): void
+    {
+        $this->expectException(CollectionException::class);
+        $this->expectExceptionMessage(CollectionException::MESSAGE_KEYS_INPUTS);
+
+        $incompatibleInputStructure = ['A', ['array-not-expected']];
+        $this->collection->getMany($incompatibleInputStructure);
+    }
+
+    public function testGetManyThrowExceptionForMissingElementWithSpecificKey(): void
+    {
+        $this->expectException(CollectionException::class);
+        $this->expectExceptionMessage(CollectionException::MESSAGE_MISSING_KEY);
+
+        $keys = [array_keys($this->items)[0], 'definitely-missing-key-AC(*&S'];
+        $this->collection->getMany($keys);
+    }
+
+    public function testGetMany(): void
+    {
+        $allKeys = array_keys($this->items);
+        $requestedKeys = [$allKeys[0], $allKeys[1]];
+        $requestedCollection = $this->collection->getMany($requestedKeys);
+
+        $this->assertSame($requestedKeys, $requestedCollection->keys());
+        $this->assertEquals(count($this->items), $this->collection->count());
+    }
 }
