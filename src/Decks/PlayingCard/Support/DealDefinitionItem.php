@@ -16,6 +16,7 @@ interface DealDefinitionItem
 
     /**
      * Setting number of cards to zero should result in distributing all remaining cards to such stocks one by one.
+     * Returned number should be zero or more. Negative number of cards should not be accepted and returned.
      * @return int
      */
     public function getNumberOfCards(): int;
