@@ -213,4 +213,10 @@ class CollectionEnginePhpArrayTest extends TestCase
         $this->assertEquals(0, $clone->count());
         $this->assertEquals(count($this->items), $this->collection->count());
     }
+
+    public function testKeys(): void
+    {
+        $this->assertSame(array_keys($this->items), $this->collection->keys());
+        $this->assertSame([], $this->collectionEmpty->keys());
+    }
 }

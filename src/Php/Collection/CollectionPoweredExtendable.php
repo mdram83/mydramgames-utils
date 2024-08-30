@@ -60,6 +60,11 @@ class CollectionPoweredExtendable implements Collection
         return $this->engine->exist($key);
     }
 
+    final public function keys(): array
+    {
+        return $this->engine->keys();
+    }
+
     final public function toArray(): array
     {
         return $this->engine->toArray();

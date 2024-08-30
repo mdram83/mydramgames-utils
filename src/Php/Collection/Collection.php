@@ -26,6 +26,12 @@ interface Collection
     public function exist(mixed $key): bool;
 
     /**
+     * Return array of collection keys
+     * @return array
+     */
+    public function keys(): array;
+
+    /**
      * Return all collection elements as array
      * @return array
      */

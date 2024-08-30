@@ -45,6 +45,14 @@ class CollectionEnginePhpArray implements CollectionEngine
     /**
      * @inheritDoc
      */
+    public function keys(): array
+    {
+        return array_keys($this->items);
+    }
+
+    /**
+     * @inheritDoc
+     */
     final public function toArray(): array
     {
         return $this->items;
