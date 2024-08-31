@@ -373,4 +373,21 @@ class CollectionPoweredExtendableTest extends TestCase
 
         $this->assertSame($orderedKeys, $this->collection->keys());
     }
+
+    public function testPullThrowExceptionForMissingKey(): void
+    {
+        $this->expectException(CollectionException::class);
+        $this->expectExceptionMessage(CollectionException::MESSAGE_MISSING_KEY);
+
+        $this->collection->pull('definitely-this-is-123-missing-k3yKHGGS*');
+    }
+
+    public function testPull(): void
+    {
+        $key = array_keys($this->items)[0];
+        $pulled = $this->collection->pull($key);
+
+        $this->assertSame($this->items[$key], $pulled);
+        $this->assertEquals(count($this->items) - 1, $this->collection->count());
+    }
 }

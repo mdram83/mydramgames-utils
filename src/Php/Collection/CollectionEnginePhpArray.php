@@ -141,6 +141,16 @@ class CollectionEnginePhpArray implements CollectionEngine
     /**
      * @inheritDoc
      */
+    final public function pull(mixed $key): mixed
+    {
+        $item = $this->getOne($key);
+        $this->removeOne($key);
+        return $item;
+    }
+
+    /**
+     * @inheritDoc
+     */
     final public function removeOne(mixed $key): void
     {
         $this->validateExists($key);

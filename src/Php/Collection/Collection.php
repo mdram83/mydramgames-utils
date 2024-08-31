@@ -123,6 +123,14 @@ interface Collection
     public function removeAll(): void;
 
     /**
+     * Remove and return single element from collection
+     * @param mixed $key
+     * @return mixed
+     * @throws CollectionException
+     */
+    public function pull(mixed $key): mixed;
+
+    /**
      * Remove and return first element of collection. Modifies original collection.
      * @return mixed
      * @throws CollectionException

@@ -123,10 +123,15 @@ class CollectionPoweredExtendable implements Collection
         return $this->engine->getOne($key);
     }
 
-    public function getMany(array $keys): static
+    final public function getMany(array $keys): static
     {
         $items = $this->engine->getMany($keys)->toArray();
         return $this->clone()->reset($items);
+    }
+
+    final public function pull(mixed $key): mixed
+    {
+        return $this->engine->pull($key);
     }
 
     final public function removeOne(mixed $key): void
