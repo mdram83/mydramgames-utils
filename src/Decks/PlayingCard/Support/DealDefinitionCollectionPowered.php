@@ -16,4 +16,9 @@ class DealDefinitionCollectionPowered extends CollectionPoweredExtendable implem
     {
         return spl_object_hash($item);
     }
+
+    public function getSumNumberOfCards(): int
+    {
+        return array_sum(array_map(fn($item) => $item->getNumberOfCards(), $this->toArray()));
+    }
 }

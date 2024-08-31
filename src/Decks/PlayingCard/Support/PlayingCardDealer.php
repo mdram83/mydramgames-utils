@@ -13,17 +13,19 @@ interface PlayingCardDealer
 
     /**
      * Shuffle cards and distribute according to provided definitions.
-     * @param PlayingCardCollection $stock
+     * Allows to decide if deck should be shuffled and if requested cards should be dealt by one card or by definition
+     * Remaining cards (DealDefinitionItem with null numberOfCards) are dealt on by one
+     * @param PlayingCardCollection $deck
      * @param DealDefinitionCollection $definitions
-     * @param bool $shuffleStockPriorToDealing
-     * @param bool $dealOneCardPerDefinition when false, first definitions stock get requested cards, then next stocks
+     * @param bool $shuffleDeck
+     * @param bool $dealOneCardPerDefinition when false, first definition get requested cards, then next.
      * @return void
      * @see DealDefinitionItem for details.
      */
     public function dealCards(
-        PlayingCardCollection $stock,
+        PlayingCardCollection $deck,
         DealDefinitionCollection $definitions,
-        bool $shuffleStockPriorToDealing = true,
+        bool $shuffleDeck = true,
         bool $dealOneCardPerDefinition = true,
     ): void;
 

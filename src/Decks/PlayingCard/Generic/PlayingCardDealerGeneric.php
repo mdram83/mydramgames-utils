@@ -12,33 +12,33 @@ use MyDramGames\Utils\Exceptions\PlayingCardDealerException;
 class PlayingCardDealerGeneric implements PlayingCardDealer
 {
     /**
-     * @param PlayingCardCollection $stock
+     * @param PlayingCardCollection $deck
      * @param DealDefinitionCollection $definitions
-     * @param bool $shuffleStockPriorToDealing
+     * @param bool $shuffleDeck
      * @param bool $dealOneCardPerDefinition
      * @inheritDoc
      * @throws PlayingCardDealerException
      * @throws CollectionException
      */
     public function dealCards(
-        PlayingCardCollection $stock,
+        PlayingCardCollection $deck,
         DealDefinitionCollection $definitions,
-        bool $shuffleStockPriorToDealing = true,
+        bool $shuffleDeck = true,
         bool $dealOneCardPerDefinition = true
     ): void {
-        $this->validateDefinitionsNotEmptyAndEnoughCards($stock, $definitions);
+        $this->validateDefinitionsNotEmptyAndEnoughCards($deck, $definitions);
 
-        if ($shuffleStockPriorToDealing) {
-            $stock->shuffle();
+        if ($shuffleDeck) {
+            $deck->shuffle();
         }
 
         if ($dealOneCardPerDefinition) {
-            $this->dealOneCardPerDefinition($stock, $definitions);
+            $this->dealOneCardPerDefinition($deck, $definitions);
         } else {
-            $this->dealAllCardsPerDefinition($stock, $definitions);
+            $this->dealAllCardsPerDefinition($deck, $definitions);
         }
 
-        $this->dealRemainingCards($stock, $definitions);
+        $this->dealRemainingCards($deck, $definitions);
     }
 
     /**
@@ -74,7 +74,7 @@ class PlayingCardDealerGeneric implements PlayingCardDealer
      * @throws PlayingCardDealerException
      */
     protected function validateDefinitionsNotEmptyAndEnoughCards(
-        PlayingCardCollection $stock,
+        PlayingCardCollection $deck,
         DealDefinitionCollection $definitions
     ): void
     {
@@ -82,8 +82,7 @@ class PlayingCardDealerGeneric implements PlayingCardDealer
             throw new PlayingCardDealerException(PlayingCardDealerException::MESSAGE_DISTRIBUTION_DEFINITION);
         }
 
-        $requestedCards = array_sum(array_map(fn($item) => $item->getNumberOfCards(), $definitions->toArray()));
-        if ($requestedCards > $stock->count()) {
+        if ($definitions->getSumNumberOfCards() > $deck->count()) {
             throw new PlayingCardDealerException(PlayingCardDealerException::MESSAGE_NOT_ENOUGH_TO_DEAL);
         }
     }
@@ -91,11 +90,11 @@ class PlayingCardDealerGeneric implements PlayingCardDealer
     /**
      * @throws CollectionException
      */
-    protected function dealAllCardsPerDefinition(PlayingCardCollection $stock, DealDefinitionCollection $definitions): void
+    protected function dealAllCardsPerDefinition(PlayingCardCollection $deck, DealDefinitionCollection $definitions): void
     {
         foreach ($definitions->toArray() as $definitionItem) {
-            for ($i = 1; $i <= $definitionItem->getNumberOfCards(); $i++) {
-                $definitionItem->getStock()->add($stock->pullFirst());
+            while ($definitionItem->getNumberOfPendingCards() > 0) {
+                $definitionItem->takeCardAndUpdatePendingCounter($deck->pullFirst());
             }
         }
     }
@@ -103,16 +102,23 @@ class PlayingCardDealerGeneric implements PlayingCardDealer
     /**
      * @throws CollectionException
      */
-    protected function dealOneCardPerDefinition(PlayingCardCollection $stock, DealDefinitionCollection $definitions): void
+    protected function dealOneCardPerDefinition(PlayingCardCollection $deck, DealDefinitionCollection $definitions): void
     {
         if ($requestedGoesTo = $definitions->filter(fn($item) => $item->getNumberOfCards() > 0)->toArray()) {
-            $remainingRequestedCards = array_sum(array_map(fn($item) => $item->getNumberOfCards(), $requestedGoesTo));
+
+            $remainingRequestedCards = $definitions->getSumNumberOfCards();
+
             while ($remainingRequestedCards > 0) {
-                current($requestedGoesTo)->getStock()->add($stock->pullFirst());
+
+                $current = current($requestedGoesTo);
+
+                if ($current->getNumberOfPendingCards() > 0) {
+                    $current->takeCardAndUpdatePendingCounter($deck->pullFirst());
+                    $remainingRequestedCards--;
+                }
                 if (!next($requestedGoesTo)) {
                     reset($requestedGoesTo);
                 }
-                $remainingRequestedCards--;
             }
         }
     }
@@ -120,11 +126,11 @@ class PlayingCardDealerGeneric implements PlayingCardDealer
     /**
      * @throws CollectionException
      */
-    protected function dealRemainingCards(PlayingCardCollection $stock, DealDefinitionCollection $definitions): void
+    protected function dealRemainingCards(PlayingCardCollection $deck, DealDefinitionCollection $definitions): void
     {
-        if ($remainingGoesTo = $definitions->filter(fn($item) => $item->getNumberOfCards() === 0)->toArray()) {
-            while ($stock->count() > 0) {
-                current($remainingGoesTo)->getStock()->add($stock->pullFirst());
+        if ($remainingGoesTo = $definitions->filter(fn($item) => $item->getNumberOfCards() === null)->toArray()) {
+            while ($deck->count() > 0) {
+                current($remainingGoesTo)->takeCardAndUpdatePendingCounter($deck->pullFirst());
                 if (!next($remainingGoesTo)) {
                     reset($remainingGoesTo);
                 }

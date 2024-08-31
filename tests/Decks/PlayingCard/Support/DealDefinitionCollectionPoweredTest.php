@@ -17,6 +17,10 @@ class DealDefinitionCollectionPoweredTest extends TestCase
     {
         $this->definitionOne = $this->createMock(DealDefinitionItem::class);
         $this->definitionTwo = $this->createMock(DealDefinitionItem::class);
+
+        $this->definitionOne->method('getNumberOfCards')->willReturn(2);
+        $this->definitionTwo->method('getNumberOfCards')->willReturn(3);
+
         $this->collection = new DealDefinitionCollectionPowered(null, [$this->definitionOne, $this->definitionTwo]);
     }
 
@@ -34,5 +38,14 @@ class DealDefinitionCollectionPoweredTest extends TestCase
             [spl_object_hash($this->definitionOne), spl_object_hash($this->definitionTwo)],
             array_keys($this->collection->toArray())
         );
+    }
+
+    public function testGetSumNumberOfCards(): void
+    {
+        $definitionThree = $this->createMock(DealDefinitionItem::class);
+        $definitionThree->method('getNumberOfCards')->willReturn(null);
+        $this->collection->add($definitionThree);
+
+        $this->assertEquals(5, $this->collection->getSumNumberOfCards());
     }
 }
