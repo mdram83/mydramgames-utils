@@ -27,7 +27,8 @@ class PlayingCardDealerGeneric implements PlayingCardDealer
         bool $shuffleDeck = true,
         bool $dealOneCardPerDefinition = true
     ): void {
-        $this->validateDefinitionsNotEmptyAndEnoughCards($deck, $definitions);
+        $this->validateDefinitionsNotEmpty($deck, $definitions);
+        $this->validateEnoughCardsInStock($deck, $definitions->getSumNumberOfCards());
 
         if ($shuffleDeck) {
             $deck->shuffle();
@@ -59,29 +60,39 @@ class PlayingCardDealerGeneric implements PlayingCardDealer
 
     /**
      * @inheritDoc
+     * @throws PlayingCardDealerException
+     * @throws CollectionException
      */
     public function moveCardsTimes(
         PlayingCardCollection $fromStock,
         PlayingCardCollection $toStock,
-        ?int $numberOfCards = null,
+        int $numberOfCards,
     ): void {
-        // TODO: Implement moveCardsTimes() method.
+        $this->validateEnoughCardsInStock($fromStock, $numberOfCards);
+        for ($i = 1; $i <= $numberOfCards; $i++) {
+            $toStock->add($fromStock->pullFirst());
+        }
     }
 
     /**
      * @inheritDoc
+     * @throws CollectionException
+     * @throws PlayingCardDealerException
      */
     public function collectCards(
         PlayingCardCollection $toStock,
         PlayingCardStocksCollection $fromStocks
     ): PlayingCardCollection {
-        // TODO: Implement collectCards() method.
+        foreach ($fromStocks->toArray() as $fromStock) {
+            $this->moveCardsTimes($fromStock, $toStock, $fromStock->count());
+        }
+        return $toStock;
     }
 
     /**
      * @throws PlayingCardDealerException
      */
-    protected function validateDefinitionsNotEmptyAndEnoughCards(
+    protected function validateDefinitionsNotEmpty(
         PlayingCardCollection $deck,
         DealDefinitionCollection $definitions
     ): void
@@ -89,9 +100,15 @@ class PlayingCardDealerGeneric implements PlayingCardDealer
         if ($definitions->isEmpty()) {
             throw new PlayingCardDealerException(PlayingCardDealerException::MESSAGE_DISTRIBUTION_DEFINITION);
         }
+    }
 
-        if ($definitions->getSumNumberOfCards() > $deck->count()) {
-            throw new PlayingCardDealerException(PlayingCardDealerException::MESSAGE_NOT_ENOUGH_TO_DEAL);
+    /**
+     * @throws PlayingCardDealerException
+     */
+    protected function validateEnoughCardsInStock(PlayingCardCollection $stock, int $requestedNumberOfCards): void
+    {
+        if ($requestedNumberOfCards > $stock->count()) {
+            throw new PlayingCardDealerException(PlayingCardDealerException::MESSAGE_NOT_ENOUGH_IN_STOCK);
         }
     }
 

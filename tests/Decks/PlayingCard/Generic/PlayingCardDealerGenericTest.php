@@ -7,6 +7,7 @@ use MyDramGames\Utils\Decks\PlayingCard\Generic\PlayingCardDealerGeneric;
 use MyDramGames\Utils\Decks\PlayingCard\PlayingCard;
 use MyDramGames\Utils\Decks\PlayingCard\PlayingCardCollection;
 use MyDramGames\Utils\Decks\PlayingCard\PlayingCardCollectionPoweredUnique;
+use MyDramGames\Utils\Decks\PlayingCard\PlayingCardStockCollectionPowered;
 use MyDramGames\Utils\Decks\PlayingCard\Support\DealDefinitionCollectionPowered;
 use MyDramGames\Utils\Exceptions\PlayingCardDealerException;
 use PHPUnit\Framework\TestCase;
@@ -49,7 +50,7 @@ class PlayingCardDealerGenericTest extends TestCase
     public function testDealCardsThrowExceptionWithNotEnoughInDeck(): void
     {
         $this->expectException(PlayingCardDealerException::class);
-        $this->expectExceptionMessage(PlayingCardDealerException::MESSAGE_NOT_ENOUGH_TO_DEAL);
+        $this->expectExceptionMessage(PlayingCardDealerException::MESSAGE_NOT_ENOUGH_IN_STOCK);
 
         $definitionItem = new DealDefinitionItemGeneric($this->handOne, $this->deckSize + 1);
         $definitions = new DealDefinitionCollectionPowered(null, [$definitionItem]);
@@ -186,5 +187,56 @@ class PlayingCardDealerGenericTest extends TestCase
         $this->assertEquals(2, $this->handOne->count());
         $this->assertEquals($this->deckSize - 2, $this->deck->count());
         $this->assertSame($moveKeys, $this->handOne->keys());
+    }
+
+    public function testMoveCardsTimesThrowExceptionIfNotEnoughCards(): void
+    {
+        $this->expectException(PlayingCardDealerException::class);
+        $this->expectExceptionMessage(PlayingCardDealerException::MESSAGE_NOT_ENOUGH_IN_STOCK);
+
+        $this->dealer->moveCardsTimes($this->deck, $this->handOne, $this->deckSize + 1);
+    }
+
+    public function testMoveCarsTimes(): void
+    {
+        $this->dealer->moveCardsTimes($this->deck, $this->handOne, $this->deckSize - 1);
+
+        $this->assertEquals($this->deckSize - 1, $this->handOne->count());
+        $this->assertEquals(1, $this->deck->count());
+    }
+
+    public function testCollectCards(): void
+    {
+        $emptyStock = new PlayingCardCollectionPoweredUnique();
+        $definitionItems = [
+            new DealDefinitionItemGeneric($this->handOne, 7),
+            new DealDefinitionItemGeneric($this->handTwo, 7),
+            new DealDefinitionItemGeneric($this->handThree, 7),
+            new DealDefinitionItemGeneric($this->bonus, 3),
+            new DealDefinitionItemGeneric($emptyStock, 0),
+        ];
+        $definitions = new DealDefinitionCollectionPowered(null, $definitionItems);
+        $this->dealer->dealCards($this->deck, $definitions, false,true);
+
+        $stocksArray = [
+            $this->handOne,
+            $this->handTwo,
+            $this->handThree,
+            $this->bonus,
+        ];
+
+        $preCheckDealtCardsSum = array_sum(array_map(fn($item) => $item->count(), $stocksArray));
+        $preCheckDeckCards = $this->deck->count();
+
+        $stocksToCollectFrom = new PlayingCardStockCollectionPowered(null, $stocksArray);
+        $collected = $this->dealer->collectCards($this->deck, $stocksToCollectFrom);
+
+        $this->assertEquals(24, $preCheckDealtCardsSum);
+        $this->assertEquals(0, $preCheckDeckCards);
+
+        $this->assertEquals(24, $collected->count());
+        $this->assertEquals(24, $this->deck->count());
+        $this->assertEquals(0, array_sum(array_map(fn($item) => $item->count(), $stocksArray)));
+
     }
 }

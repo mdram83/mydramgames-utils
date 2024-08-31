@@ -59,16 +59,16 @@ interface PlayingCardDealer
     ): void;
 
     /**
-     * Move cards between stocks provided number of times. $numberOfCards set to null should move all available cards.
+     * Move cards between stocks provided number of times.
      * @param PlayingCardCollection $fromStock
      * @param PlayingCardCollection $toStock
-     * @param int|null $numberOfCards
+     * @param int $numberOfCards
      * @return void
      */
     public function moveCardsTimes(
         PlayingCardCollection $fromStock,
         PlayingCardCollection $toStock,
-        ?int $numberOfCards = null,
+        int $numberOfCards,
     ): void;
 
     /**
