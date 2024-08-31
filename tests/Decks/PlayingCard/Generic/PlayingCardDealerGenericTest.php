@@ -167,5 +167,24 @@ class PlayingCardDealerGenericTest extends TestCase
         );
     }
 
+    public function testMoveCardsByKeysThrowExceptionWhenMissingInFromStock(): void
+    {
+        $this->expectException(PlayingCardDealerException::class);
+        $this->expectExceptionMessage(PlayingCardDealerException::MESSAGE_KEY_MISSING_IN_STOCK);
 
+        $deckKeys = $this->deck->keys();
+        $keys = [$deckKeys[0], $deckKeys[1], 'not-deck-key-missing-123$%^'];
+        $this->dealer->moveCardsByKeys($this->deck, $this->handOne, $keys);
+    }
+
+    public function testMoveCardsByKeys(): void
+    {
+        $deckKeys = $this->deck->keys();
+        $moveKeys = [$deckKeys[0], $deckKeys[1]];
+        $this->dealer->moveCardsByKeys($this->deck, $this->handOne, $moveKeys);
+
+        $this->assertEquals(2, $this->handOne->count());
+        $this->assertEquals($this->deckSize - 2, $this->deck->count());
+        $this->assertSame($moveKeys, $this->handOne->keys());
+    }
 }

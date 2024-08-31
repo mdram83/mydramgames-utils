@@ -7,6 +7,7 @@ use MyDramGames\Utils\Decks\PlayingCard\PlayingCardStocksCollection;
 use MyDramGames\Utils\Decks\PlayingCard\Support\DealDefinitionCollection;
 use MyDramGames\Utils\Decks\PlayingCard\Support\PlayingCardDealer;
 use MyDramGames\Utils\Exceptions\CollectionException;
+use MyDramGames\Utils\Exceptions\PlayingCardCollectionException;
 use MyDramGames\Utils\Exceptions\PlayingCardDealerException;
 
 class PlayingCardDealerGeneric implements PlayingCardDealer
@@ -43,10 +44,17 @@ class PlayingCardDealerGeneric implements PlayingCardDealer
 
     /**
      * @inheritDoc
+     * @throws PlayingCardDealerException|PlayingCardCollectionException
+     * @throws CollectionException
      */
     public function moveCardsByKeys(PlayingCardCollection $fromStock, PlayingCardCollection $toStock, array $keys): void
     {
-        // TODO: Implement moveCardsByKeys() method.
+        if ($fromStock->countMatchingKeysCombinations([$keys]) <= 0) {
+            throw new PlayingCardDealerException(PlayingCardDealerException::MESSAGE_KEY_MISSING_IN_STOCK);
+        }
+        foreach ($keys as $key) {
+            $toStock->add($fromStock->pull($key));
+        }
     }
 
     /**
