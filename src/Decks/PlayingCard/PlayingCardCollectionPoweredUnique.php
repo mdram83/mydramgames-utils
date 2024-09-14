@@ -40,11 +40,8 @@ class PlayingCardCollectionPoweredUnique extends CollectionPoweredExtendable imp
     {
         return $this->sortKeys(function($keyOne, $keyTwo) use ($keys): int {
             $keys = array_reverse($keys);
-
-            $keyOnePriority = !in_array($keyOne, $keys) ? -1 : array_search($keyOne, $keys);
-            $keyTwoPriority = !in_array($keyTwo, $keys) ? -1 : array_search($keyTwo, $keys);
-
-            return $keyOnePriority < $keyTwoPriority;
+            $priority = fn($key) => !in_array($key, $keys) ? -1 : array_search($key, $keys);
+            return $priority($keyTwo) - $priority($keyOne);
         });
     }
 

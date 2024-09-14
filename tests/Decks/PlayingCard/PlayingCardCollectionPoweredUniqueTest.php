@@ -67,7 +67,7 @@ class PlayingCardCollectionPoweredUniqueTest extends TestCase
         $this->assertEquals(2, $this->collection->countMatchingKeysCombinations([$combTrue1, $combTrue2, $combFalse1, $combFalse2]));
     }
 
-    public function testSortByKeys(): void
+    public function testSortByKeysSimple(): void
     {
         $cardThree = $this->createMock(PlayingCard::class);
         $cardThree->method('getKey')->willReturn('key-3');
@@ -80,7 +80,23 @@ class PlayingCardCollectionPoweredUniqueTest extends TestCase
         $incompleteKeys = [$initialKeys[2]];
 
         $this->assertSame($orderedKeysAll, $this->collection->sortByKeys($orderedKeysAll)->keys());
-
         $this->assertSame([$initialKeys[2], $initialKeys[0], $initialKeys[1]], $initialCollection->sortByKeys($incompleteKeys)->keys());
+    }
+
+    public function testSortByKeysAdvanced(): void
+    {
+        $keys  = ['A-H', 'J-D', 'K-D', 'K-C', '9-S', '10-S', 'K-S'];
+        $order = ['K-S', 'K-D', 'J-D', '9-S', 'K-C', 'A-H', '10-S'];
+
+        $cardsArray = [];
+        foreach ($keys as $key) {
+            $card = $this->createMock(PlayingCard::class);
+            $card->method('getKey')->willReturn($key);
+            $cardsArray[] = $card;
+        }
+
+        $cards = new PlayingCardCollectionPoweredUnique(null, $cardsArray);
+
+        $this->assertEquals($order, $cards->sortByKeys($order)->keys());
     }
 }
