@@ -4,10 +4,12 @@ namespace Tests;
 
 use MyDramGames\Utils\Php\Collection\CollectionEngine;
 use MyDramGames\Utils\Php\Collection\CollectionEnginePhpArray;
+use MyDramGames\Utils\Player\Player;
 use MyDramGames\Utils\Player\PlayerAnonymous;
 use MyDramGames\Utils\Player\PlayerAnonymousGeneric;
 use MyDramGames\Utils\Player\PlayerRegistered;
 use MyDramGames\Utils\Player\PlayerRegisteredGeneric;
+use MyDramGames\Utils\PlayerData\PlayerDataBase;
 
 class TestingHelper
 {
@@ -52,5 +54,20 @@ class TestingHelper
     public static function getCollectionEngine(): CollectionEngine
     {
         return new CollectionEnginePhpArray();
+    }
+
+    public static function getPlayerDataBase(Player $player): PlayerDataBase
+    {
+        return new class($player) extends PlayerDataBase {
+
+            public function toArray(): array
+            {
+                return [
+                    'id' => $this->player->getId(),
+                    'name' => $this->player->getName(),
+                    'seat' => $this->seat,
+                ];
+            }
+        };
     }
 }
