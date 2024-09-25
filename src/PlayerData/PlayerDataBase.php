@@ -33,5 +33,13 @@ abstract class PlayerDataBase implements PlayerData
     /**
      * @inheritDoc
      */
+    public function getPlayer(): Player
+    {
+        return $this->player;
+    }
+
+    /**
+     * @inheritDoc
+     */
     abstract public function toArray(): array;
 }

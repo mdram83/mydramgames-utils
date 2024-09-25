@@ -31,6 +31,11 @@ class PlayerDataBaseTest extends TestCase
         $this->assertSame($this->player->getId(), $this->data->getId());
     }
 
+    public function testGetPlayer(): void
+    {
+        $this->assertSame($this->player, $this->data->getPlayer());
+    }
+
     public function testSeat(): void
     {
         $this->data->seat = 1;
