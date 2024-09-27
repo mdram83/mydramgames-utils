@@ -109,6 +109,14 @@ interface Collection
     public function getMany(array $keys): static;
 
     /**
+     * Returns single nth element of the collection.
+     * @param int $nth is order of requested element in collection, starting from 0 for first element.
+     * @return mixed
+     * @throws CollectionException
+     */
+    public function getNth(int $nth): mixed;
+
+    /**
      * Return single element from collection
      * @param mixed $key
      * @return void

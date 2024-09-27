@@ -141,6 +141,17 @@ class CollectionEnginePhpArray implements CollectionEngine
     /**
      * @inheritDoc
      */
+    final public function getNth(int $nth): mixed
+    {
+        $this->validateNotEmpty();
+        $this->validateEnoughElements($nth + 1);
+
+        return $this->getOne($this->keys()[$nth]);
+    }
+
+    /**
+     * @inheritDoc
+     */
     final public function pull(mixed $key): mixed
     {
         $item = $this->getOne($key);

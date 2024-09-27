@@ -275,4 +275,31 @@ class CollectionEnginePhpArrayTest extends TestCase
         $this->assertSame($this->items[$key], $pulled);
         $this->assertEquals(count($this->items) - 1, $this->collection->count());
     }
+
+    public function testGetNthThrowExceptionWhenEmpty(): void
+    {
+        $this->expectException(CollectionException::class);
+        $this->expectExceptionMessage(CollectionException::MESSAGE_NO_ELEMENTS);
+
+        $collection = new CollectionEnginePhpArray();
+        $collection->getNth(0);
+    }
+
+    public function testGetNthThrowExceptionWhenNotEnoughElements(): void
+    {
+        $this->expectException(CollectionException::class);
+        $this->expectExceptionMessage(CollectionException::MESSAGE_NOT_ENOUGH);
+
+        $this->collection->getNth($this->collection->count());
+    }
+
+    public function testGetNth(): void
+    {
+        $elements = ['A' => 1, 'B' => 2, 'C' => 3];
+        $this->collection->reset($elements);
+
+        $this->assertEquals(1, $this->collection->getNth(0));
+        $this->assertEquals(2, $this->collection->getNth(1));
+        $this->assertEquals(3, $this->collection->getNth(2));
+    }
 }

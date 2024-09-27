@@ -10,4 +10,5 @@ class CollectionException extends MyDramGamesUtilsException
     public const string MESSAGE_DUPLICATE = 'Duplicate not expected in this collection';
     public const string MESSAGE_KEY_MODE_ERROR = 'Incompatible item key';
     public const string MESSAGE_KEYS_INPUTS = 'Incompatible requested keys list';
+    public const string MESSAGE_NOT_ENOUGH = 'Collection not having enough elements';
 }

@@ -73,4 +73,14 @@ trait CollectionEngineTrait
             }
         }
     }
+
+    /**
+     * @throws CollectionException
+     */
+    final protected function validateEnoughElements(int $requiredElements): void
+    {
+        if ($this->count() < $requiredElements) {
+            throw new CollectionException(CollectionException::MESSAGE_NOT_ENOUGH);
+        }
+    }
 }

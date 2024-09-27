@@ -129,6 +129,11 @@ class CollectionPoweredExtendable implements Collection
         return $this->clone()->reset($items);
     }
 
+    final public function getNth(int $nth): mixed
+    {
+        return $this->engine->getNth($nth);
+    }
+
     final public function pull(mixed $key): mixed
     {
         return $this->engine->pull($key);

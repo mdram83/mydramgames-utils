@@ -390,4 +390,9 @@ class CollectionPoweredExtendableTest extends TestCase
         $this->assertSame($this->items[$key], $pulled);
         $this->assertEquals(count($this->items) - 1, $this->collection->count());
     }
+
+    public function getNth(): void
+    {
+        $this->assertEquals(array_values($this->items)[0], $this->collection->getNth(0));
+    }
 }
