@@ -6,18 +6,19 @@ use MyDramGames\Utils\Exceptions\BackedEnumException;
 use PHPUnit\Framework\TestCase;
 use Tests\TestingStubs\BackedEnum;
 
-class FromValueBackedEnumTraitTest extends TestCase
+class FromNameBackedEnumTraitTest extends TestCase
 {
     public function testFromValueThrowErrorIfNoValue(): void
     {
         $this->expectException(BackedEnumException::class);
-        $this->expectExceptionMessage(BackedEnumException::MESSAGE_MISSING_VALUE);
-        BackedEnum::fromValue(91919191);
+        $this->expectExceptionMessage(BackedEnumException::MESSAGE_MISSING_NAME);
+
+        BackedEnum::fromName('No-such N@me1(&&**');
     }
 
-    public function testFromValue(): void
+    public function testFromName(): void
     {
-        $backedEnum = BackedEnum::fromValue(BackedEnum::One->value);
+        $backedEnum = BackedEnum::fromName(BackedEnum::One->name);
         $this->assertEquals($backedEnum->value, BackedEnum::One->getValue());
     }
 }
